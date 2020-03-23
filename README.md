@@ -6,8 +6,7 @@ inefficient. There exist many better libraries for real deep-learning.
 
 ## Tasks
 
-1. Write tests for `*`, `mag`, and `norm`
-2. Add matrices (type and operations)
+1. Add matrices (type and operations)
 
 ## Usage
 
