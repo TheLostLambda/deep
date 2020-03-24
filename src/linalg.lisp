@@ -2,7 +2,7 @@
 (defpackage deep.linalg
   (:use :cl)
   (:shadow :+ :*)
-  (:export :+ :* :mag :norm :make-matrix))
+  (:export :+ :* :mag :norm :shape))
 (in-package :deep.linalg)
 
 ;;; Some macro-magic for overriding operators
@@ -48,46 +48,40 @@
 
 ;;; Matrices
 (defun matrixp (obj)
-  (and (arrayp obj)
-       (= 2 (array-rank obj))
-       (loop for i from 0 to (1- (array-total-size obj))
-             always (numberp (row-major-aref obj i)))))
+  (and (vectorp obj)
+       (/= (length obj) 0)
+       (every #'vectorp obj)
+       (/= (length (elt obj 0)) 0)
+       (apply #'= (map 'list #'length obj))
+       (every (lambda (v) (every #'numberp v)) obj)))
 
 (defclass matrix (sequence standard-object)
-  ((internal-array
-    :initarg :internal-array
-    :type (satisfies matrixp))))
+  ((rows
+    :initarg :rows
+    :type (satisfies matrixp)
+    :reader get-rows)))
 
-(defun make-matrix (array)
-  (check-type array (satisfies matrixp))
-  (make-instance 'matrix :internal-array array))
+(defun make-matrix (vector)
+  (check-type vector (satisfies matrixp))
+  (make-instance 'matrix :rows vector))
 
 ;; This could use some improved pretty-printing
 (defmethod print-object ((m matrix) stream)
-  (let ((internal (write-to-string (slot-value m 'internal-array))))
-    (format stream "#M~A" (string-trim "#2A" internal))))
+    (format stream "#M~A" (remove #\# (write-to-string (get-rows m)))))
 
 (defun read-matrix (stream subchar arg)
   (declare (ignore subchar arg))
-  (let* ((prefix (make-string-input-stream "#2A"))
-         (stream (make-concatenated-stream prefix stream)))
-    (make-matrix (read stream))))
+  (let* ((prefix (make-string-input-stream "#"))
+         (stream (make-concatenated-stream prefix stream))
+         (vector (map 'vector (lambda (v) (coerce v 'vector)) (read stream))))
+    (make-matrix vector)))
 
 (set-dispatch-macro-character #\# #\M #'read-matrix)
 
 (defmethod shape ((m matrix))
-  (array-dimensions (slot-value m 'internal-array)))
-
-(defmethod get-rows ((m matrix))
-  (destructuring-bind (rows columns) (shape m)
-    (let ((array (slot-value m 'internal-array)))
-      (loop for r from 0 to (1- rows)
-            collect (loop for c from 0 to (1- columns)
-                          collect (aref array r c))))))
+  (with-slots (rows) m
+      (list (length rows) (length (elt rows 0)))))
 
 (defmethod get-columns ((m matrix))
-  (destructuring-bind (rows columns) (shape m)
-    (let ((array (slot-value m 'internal-array)))
-      (loop for c from 0 to (1- columns)
-            collect (loop for r from 0 to (1- rows)
-                          collect (aref array r c))))))
+  (with-slots (rows) m
+    (apply #'map 'vector #'vector (coerce rows 'list))))
