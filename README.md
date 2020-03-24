@@ -6,8 +6,6 @@ inefficient. There exist many better libraries for real deep-learning.
 
 ## Tasks
 
-1. Add matrices (type and operations)
-
 ## Usage
 
 ## Installation
