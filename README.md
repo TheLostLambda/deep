@@ -6,6 +6,8 @@ inefficient. There exist many better libraries for real deep-learning.
 
 ## Tasks
 
+1. Implement perceptron learning
+
 ## Usage
 
 ## Installation

@@ -65,6 +65,8 @@
   (cl:+ a b))
 
 (defmethod bin-+ ((a vector) (b vector))
+  (unless (= (length a) (length b))
+    (error "Vectors are of incompatible dimensions for addition"))
   (map 'vector #'cl:+ a b))
 
 ;;; Overriding *
@@ -80,6 +82,8 @@
   (bin-* b a))
 
 (defmethod bin-* ((a vector) (b vector))
+  (unless (= (length a) (length b))
+    (error "Vectors are of incompatible dimensions for multiplication"))
   (apply #'cl:+ (map 'list #'cl:* a b)))
 
 (defmethod bin-* ((a matrix) (b matrix))
