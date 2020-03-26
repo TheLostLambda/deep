@@ -1,8 +1,8 @@
 ;;;; Linear Algebra Utilities
 (defpackage deep.linalg
   (:use :cl)
-  (:shadow :+ :*)
-  (:export :+ :* :mag :norm :matrix :get-rows :get-columns :shape))
+  (:shadow :+ :* :- :/)
+  (:export :+ :* :- :/ :mag :norm :matrix :get-rows :get-columns :shape))
 (in-package :deep.linalg)
 
 ;;; Matrices
@@ -69,6 +69,12 @@
     (error "Vectors are of incompatible dimensions for addition"))
   (map 'vector #'cl:+ a b))
 
+;;; Overriding -
+(make-op -)
+
+(defmethod bin-- (a b)
+  (+ a (* -1 b)))
+
 ;;; Overriding *
 (make-op *)
 
@@ -95,11 +101,16 @@
     ; Make this a condition!
     (error "Matrices are of incompatible dimensions for multiplication")))
 
+;;; Overriding /
+(make-op /)
+
+(defmethod bin-/ (a (b number))
+  (* a (cl:/ b)))
+
 ;;; Finding vector magnitude
 (defun mag (vec)
   (sqrt (loop for x across vec summing (expt x 2))))
 
 ;;; Normalise vector to magnitude 1
 (defun norm (vec)
-  (let ((scale (/ 1.0d0 (mag vec))))
-    (* scale vec)))
+  (if (zerop (mag vec)) vec (/ vec (mag vec))))

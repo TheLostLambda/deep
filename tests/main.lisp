@@ -26,6 +26,26 @@
   (testing "Multiple, mixed-type vector addition"
     (ok (equalp #(3.14d0 4/3) (deep.linalg:+ #(3 #b1) #(0.1d0 1/3) #(0.04d0 0))))))
 
+(deftest vector-subtraction
+  (testing "Binary scalar subtraction"
+    (ok (= 2 (deep.linalg:- 4 2))))
+
+  (testing "Multiple scalar subtraction"
+    (ok (= 0 (deep.linalg:- 15 1 2 3 4 5))))
+
+  (testing "Multiple, mixed-type scalar subtraction"
+    (ok (= 143/50 (deep.linalg:- 3 1/10 1/25)))
+    (ok (= 19.8 (deep.linalg:- #b1111 0.2 -5))))
+
+  (testing "Binary vector subtraction"
+    (ok (equalp #(4 3 -1) (deep.linalg:- #(3 4 1) #(-1 1 2)))))
+
+  (testing "Multiple vector subtraction"
+    (ok (equalp #(0 0) (deep.linalg:- #(5 5) #(1 2) #(2 1) #(2 2)))))
+
+  (testing "Multiple, mixed-type vector subtraction"
+    (ok (equalp #(3 #b1) (deep.linalg:- #(3.14d0 4/3)  #(0.1d0 1/3) #(0.04d0 0))))))
+
 (deftest vector-multiplication
   (testing "Binary scalar multiplication"
     (ok (= 4 (deep.linalg:* 2 2))))
@@ -50,6 +70,20 @@
 
   (testing "Multiple, mixed-type vector multiplication"
     (ok (equalp #(0.092d0 0.0d0) (deep.linalg:* #(3 #b1) #(0.1d0 2/1) #(0.04d0 0))))))
+
+(deftest vector-division
+  (testing "Binary scalar division"
+    (ok (= 1 (deep.linalg:/ 2 2))))
+
+  (testing "Multiple scalar division"
+    (ok (= 1 (deep.linalg:/ 120 5 4 3 2 1))))
+
+  (testing "Multiple, mixed-type scalar division"
+    (ok (= 750 (deep.linalg:/ 3 1/10 1/25)))
+    (ok (= -15.0 (deep.linalg:/ #b1111 0.2d0 -5))))
+
+  (testing "Multiple, scalar-vector division"
+    (ok (equalp #(4 2 1) (deep.linalg:/ #(16 8 4) 2 2)))))
 
 (deftest vector-magnitude
   (testing "Scalar magnitudes"

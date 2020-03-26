@@ -6,7 +6,8 @@ inefficient. There exist many better libraries for real deep-learning.
 
 ## Tasks
 
-1. Implement perceptron learning
+1. Write `learn` to auto-train perceptrons
+2. Write tests for perceptrons
 
 ## Usage
 
