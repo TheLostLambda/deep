@@ -4,7 +4,9 @@
 (in-package :deep)
 
 (defun binary-classifier (x)
-  (if (> x 0) 1 -1))
+  (cond ((> x 0)  1)
+        ((< x 0) -1)
+        (t x)))
 
 (defclass perceptron ()
   ((weights
@@ -44,6 +46,14 @@
       (values
         (setf weights (+ weights (* y xs)))
         (incf bias y)))))
+
+;; Could I get fancy with a loop here?
+(defmethod learn ((p perceptron) (xss matrix) (ys vector))
+  (do ((c 0 (1+ c))
+       (i 0 (rem (1+ i) (length ys))))
+      ((= c (length ys)))
+    (when (train p (elt (get-rows xss) i) (elt ys i))
+      (setf c -1))))
 
 ;; Could use some more polish
 (defmethod loss ((p perceptron) (xs vector) (y number))
