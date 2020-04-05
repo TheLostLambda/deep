@@ -95,9 +95,9 @@
 (defmethod bin-* ((a matrix) (b matrix))
   (if (= (cadr (shape a)) (car (shape b)))
     (make-matrix
-      (loop for r across (get-rows a)
-            collect (loop for c across (get-columns b)
-                          collect (* r c))))
+      (loop :for r :across (get-rows a)
+            :collect (loop :for c :across (get-columns b)
+                           :collect (* r c))))
     ; Make this a condition!
     (error "Matrices are of incompatible dimensions for multiplication")))
 
